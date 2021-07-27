@@ -1,0 +1,84 @@
+<!DOCTYPE HTML>
+<link rel="stylesheet" href="style.css">
+<html>
+  <head>
+    <title>Pizzeria</title>
+  </head>
+  <body>
+      <div id="top_bar">
+          
+      </div>
+      
+      <div id="menu">
+          <img src="img/logo.png">
+          <a id="odstep" href="menu.html">Menu</a>
+          <a href="index.html">Strona główna</a>
+          <p>Najlepszy smak gwarantowany!</p>
+      </div>
+      <div id="space">
+          <table border="solid 1px">
+			<tr class="first_tr">
+				<td>
+					Ciasto:
+					<select name="pizza_name">
+						<?php
+						include("connection.php");
+						$query = "SELECT dough_type FROM dough_type";
+						$result = $link->query($query);
+						if ($result->num_rows > 0) {
+							while($row = $result->fetch_assoc()) {
+								echo "<option>".$row["dough_type"]."</option>";
+								}
+							}
+						?>
+					</select>
+				</td>
+				<th>30cm</th><th>45cm</th><th>60cm</th>
+			</tr>
+<?php
+	$query = "SELECT name,pizza_id FROM pizza";
+	$result = $link->query($query);
+	if ($result->num_rows > 0) {
+    while($row = $result->fetch_assoc()) {
+        echo "<tr><td>";
+        echo $row["name"].'</br>';
+        	$query_toppings = "SELECT name,price FROM toppings JOIN topping ON toppings.topping_id=topping.topping_id WHERE toppings.pizza_id=".$row["pizza_id"];
+        	$result_toppings = $link->query($query_toppings);
+        	while($row_toppings = $result_toppings->fetch_assoc()) {
+        		echo $row_toppings["name"].' ';
+        	}
+        	$query_sizes = "SELECT price FROM pizza_size";
+        	$result_sizes = $link->query($query_sizes);
+        	while($row_sizes = $result_sizes->fetch_assoc()){
+       		echo "</td>";
+        	$query_small = "SELECT sum(topping.price)+".$row_sizes["price"]." AS s from toppings JOIN topping ON toppings.topping_id=topping.topping_id WHERE pizza_id=".$row["pizza_id"];
+        	$result_small = $link->query($query_small);
+        	while($row_small = $result_small->fetch_assoc()) {
+        		echo "<td>".$row_small["s"]."zł</td>";
+        	}
+        	}
+        echo "</tr>";
+    }
+} else {
+    echo "0 results";
+}
+$link->close();
+?>
+		</table>
+      
+      </div>
+      <div id="maiin">
+          
+          
+          
+                
+      </div>
+      
+      
+      <div id="footer">
+      
+      </div>
+      
+      
+  </body>
+</html>
